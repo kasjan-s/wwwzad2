@@ -1,0 +1,28 @@
+<h1>{{ gmina.nazwa }}</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form action="{% url 'vote' gmina.id %}" method="post">
+    <table>
+    <tr>
+        <td>Obwod</td>
+        <td>Karty</td>
+        <td>Wyborcy</td>
+    </tr>
+    {% csrf_token %}
+
+    {% for obwod in gmina.obwod_set.all %}
+    <tr>
+        <td>{{ obwod.nazwa }}</td>
+        <td>
+            <input type="text" name="k{{ obwod.id }}" value="{{ obwod.karty }}" />
+        </td>
+        <td>
+            <input type="text" name="w{{ obwod.id }}" value="{{ obwod.wyborcy }}" />
+        </td>
+    </tr>
+    {% endfor %}
+
+    </table>
+    <input type="submit" value="Zapisz" />
+</form>

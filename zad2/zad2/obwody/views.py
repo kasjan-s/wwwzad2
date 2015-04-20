@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from django.template import RequestContext, loader
 from models import Gmina, Obwod
@@ -13,7 +13,8 @@ def index(request):
     return HttpResponse(template.render(context))
 
 def detail(request, gmina_id):
-    return HttpResponse("Odpaliles gmine %s." % gmina_id)
+    gmina = get_object_or_404(Gmina, pk=gmina_id)
+    return render(request, 'obwody/detail.html', {'gmina': gmina})
 
 def results(request, gmina_id):
     response = "Obczajasz gmine %s."
