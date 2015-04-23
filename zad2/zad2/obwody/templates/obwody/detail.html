@@ -1,28 +1,28 @@
 <h1>{{ gmina.nazwa }}</h1>
 
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+{% if fails %}
+{% for fail in fails %}<p><strong>{{ fail }}</strong></p>
+{% endfor %}
+{% endif %}
 
-<form action="{% url 'vote' gmina.id %}" method="post">
+<form action="{% url 'detail' gmina.id %}" method="post">
+    {% csrf_token %}
+    {{ formset.management_form }}
     <table>
     <tr>
         <td>Obwod</td>
         <td>Karty</td>
         <td>Wyborcy</td>
     </tr>
-    {% csrf_token %}
-
-    {% for obwod in gmina.obwod_set.all %}
+    {% for form in formset %}
     <tr>
-        <td>{{ obwod.nazwa }}</td>
-        <td>
-            <input type="text" name="k{{ obwod.id }}" value="{{ obwod.karty }}" />
-        </td>
-        <td>
-            <input type="text" name="w{{ obwod.id }}" value="{{ obwod.wyborcy }}" />
-        </td>
+        {{ form.id }}
+        <td>{{ form.moja_nazwa }}</td>
+        <td>{{ form.karty }}</td>
+        <td>{{ form.wyborcy }}</td>
     </tr>
     {% endfor %}
-
     </table>
+    <input type="hidden" value="{{ aktualizacja }}" name="czas_odczytu" />
     <input type="submit" value="Zapisz" />
 </form>
