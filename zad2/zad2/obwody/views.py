@@ -11,7 +11,7 @@ import pytz
 
 
 def index(request):
-    gminy_list = Gmina.objects.all()
+    gminy_list = Gmina.objects.all().order_by('nazwa')
     output = ", ".join([g.nazwa for g in gminy_list])
     template = loader.get_template('obwody/index.html')
     context = RequestContext(request, {
@@ -36,7 +36,7 @@ def detail(request, gmina_id):
                 else:
                     obwod = Obwod.objects.get(pk=instance.pk)
                     roznica = (pytz.utc.localize(datetime.datetime.now()) - instance.aktualizacja).total_seconds()
-                    fail_msg = "Ktos cos zmienil dla obwod %d %d sekund temu! Wpisujesz %d i %d, a jest %d i %d" % (instance.pk, roznica,instance.karty, instance.wyborcy, obwod.karty, obwod.wyborcy)
+                    fail_msg = "Ktos cos zmienil dla obwod %s %d sekund temu! Wpisujesz %d i %d, a jest %d i %d" % (instance.nazwa, roznica,instance.karty, instance.wyborcy, obwod.karty, obwod.wyborcy)
                     fail_msgs.append(fail_msg)
 
 
@@ -50,7 +50,7 @@ def detail(request, gmina_id):
             return redirect('detail', gmina_id=gmina_id)
     else:
         ObwodFormSet = modelformset_factory(Obwod, exclude=['gmina', 'nazwa', 'aktualizacja'], extra=0)
-        formset = ObwodFormSet(queryset=gmina.obwod_set.all())
+        formset = ObwodFormSet(queryset=gmina.obwod_set.all().order_by('nazwa'))
         for form in formset:
             form.moja_nazwa = form.instance.nazwa
         return render(request, 'obwody/detail.html', {'gmina': gmina, 'formset': formset, 'aktualizacja': time.time()})

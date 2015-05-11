@@ -9,8 +9,8 @@ class Gmina(models.Model):
 class Obwod(models.Model):
     nazwa = models.CharField(max_length=300)
     gmina = models.ForeignKey(Gmina)
-    karty = models.IntegerField(default=0)
-    wyborcy = models.IntegerField(default=0)
+    karty = models.PositiveIntegerField(default=0)
+    wyborcy = models.PositiveIntegerField(default=0)
     aktualizacja = models.DateTimeField('Ostatnia aktualizacja')
 
     def __unicode__(self):
