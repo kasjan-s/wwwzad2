@@ -1,28 +1,24 @@
 <h1>{{ gmina.nazwa }}</h1>
 
-{% if fails %}
-{% for fail in fails %}<p><strong>{{ fail }}</strong></p>
-{% endfor %}
-{% endif %}
-
-<form action="{% url 'detail' gmina.id %}" method="post">
-    {% csrf_token %}
-    {{ formset.management_form }}
-    <table>
+<table>
     <tr>
         <td>Obwod</td>
         <td>Karty</td>
         <td>Wyborcy</td>
+        <td></td>
     </tr>
-    {% for form in formset %}
+    {% for obwod in obwody %}
     <tr>
-        {{ form.id }}
-        <td>{{ form.moja_nazwa }}</td>
-        <td>{{ form.karty }}</td>
-        <td>{{ form.wyborcy }}</td>
+        <td>{{ obwod.nazwa }}</td>
+        <td>{{ obwod.karty }}</td>
+        <td>{{ obwod.wyborcy }}</td>
+        <td><button class="edit" id="edit{{ obwod.id }}" data-id="{{ obwod.id }}" class="btn btn-mini btn-primary" type="button">Edytuj</button>
+            <button class="save" id="save{{ obwod.id }}" data-id="{{ obwod.id }}" class="btn btn-mini btn-primary" type="button" style="display: none;">Zapisz</button>
+            <button class="cancel" id="cancel{{ obwod.id }}" data-id="{{ obwod.id }}" class="btn btn-mini btn-primary" type="button" style="display: none;">Anuluj</button>
+        </td>
     </tr>
     {% endfor %}
-    </table>
-    <input type="hidden" value="{{ aktualizacja }}" name="czas_odczytu" />
-    <input type="submit" value="Zapisz" />
-</form>
+</table>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="/static/scripts/main.js"></script>

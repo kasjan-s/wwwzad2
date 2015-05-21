@@ -8,6 +8,7 @@ from forms import ObwodForm
 import datetime
 import time
 import pytz
+import json
 
 
 def index(request):
@@ -21,40 +22,20 @@ def index(request):
 
 def detail(request, gmina_id):
     gmina = get_object_or_404(Gmina, pk=gmina_id)
-    if request.method == 'POST':
-        wersja = datetime.datetime.fromtimestamp(float(request.POST['czas_odczytu']))
-        wersja = pytz.utc.localize(wersja)
-        ObwodFormSet = modelformset_factory(Obwod, exclude=['gmina', 'nazwa', 'aktualizacja'])
-        formset = ObwodFormSet(request.POST, request.FILES)
-        if formset.is_valid():
-            instances = formset.save(commit=False)
-            fail_msgs = []
-            for instance in instances:
-                if instance.aktualizacja <= wersja:
-                    instance.aktualizacja = wersja
-                    instance.save()
-                else:
-                    obwod = Obwod.objects.get(pk=instance.pk)
-                    roznica = (pytz.utc.localize(datetime.datetime.now()) - instance.aktualizacja).total_seconds()
-                    fail_msg = "Ktos cos zmienil dla obwod %s %d sekund temu! Wpisujesz %d i %d, a jest %d i %d" % (instance.nazwa, roznica,instance.karty, instance.wyborcy, obwod.karty, obwod.wyborcy)
-                    fail_msgs.append(fail_msg)
+    obwody = gmina.obwod_set.all()
+    return render(request, 'obwody/detail.html', {'gmina': gmina, 'obwody': obwody})
 
-
-            if fail_msgs:
-                for form in formset:
-                    form.moja_nazwa = form.instance.nazwa
-                return render(request, 'obwody/detail.html', {'gmina': gmina, 'formset': formset, 'aktualizacja': time.time(), 'fails': fail_msgs})
-            else:
-                return redirect('detail', gmina_id=gmina_id)
-        else:
-            return redirect('detail', gmina_id=gmina_id)
-    else:
-        ObwodFormSet = modelformset_factory(Obwod, exclude=['gmina', 'nazwa', 'aktualizacja'], extra=0)
-        formset = ObwodFormSet(queryset=gmina.obwod_set.all().order_by('nazwa'))
-        for form in formset:
-            form.moja_nazwa = form.instance.nazwa
-        return render(request, 'obwody/detail.html', {'gmina': gmina, 'formset': formset, 'aktualizacja': time.time()})
-
+def obwod(request, obwod_id):
+    try:
+        obwod = Obwod.objects.get(pk=obwod_id)
+        print "ZNALAZLEM"
+        print "ZNALAZLEM"
+        print "ZNALAZLEM"
+        return HttpResponse(json.dumps({'karty': obwod.karty, 'wyborcy': obwod.wyborcy}), content_type="application/json")
+    except:
+        print "NIE ZNALAZLEM"
+        print "NIE ZNALAZLEM"
+        return HttpResponse(json.dumps(None), content_type="application/json")
 
 def results(request, gmina_id):
     response = "Obczajasz gmine %s."
