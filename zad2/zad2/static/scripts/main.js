@@ -54,6 +54,10 @@ $('.edit').click(function() {
     var editbtn = $(this);
     var savebtn = $("#save"+obwod_id);
     var cancelbtn = $("#cancel"+obwod_id);
+    var karty_field = $("#karty"+obwod_id);
+    var wyborcy_field = $("#wyborcy"+obwod_id);
+    var post_karty_field = $("#post_karty"+obwod_id);
+    var post_wyborcy_field = $("#post_wyborcy"+obwod_id);
 
     $.ajax({
         url : "/gminy/obwod/" + obwod_id, 
@@ -64,6 +68,67 @@ $('.edit').click(function() {
             editbtn.hide();
             savebtn.show();
             cancelbtn.show();
+            karty_field.hide();
+            karty_field.html(data.karty);
+            post_karty_field.show();
+            post_karty_field.val(data.karty);
+            wyborcy_field.hide();
+            wyborcy_field.html(data.wyborcy);
+            post_wyborcy_field.show();
+            post_wyborcy_field.val(data.wyborcy);
         }
     });
+});
+
+$('.save').click(function() {
+    var obwod_id = $(this).attr("data-id");
+    var editbtn = $("#edit"+obwod_id);
+    var savebtn = $("#save"+obwod_id);
+    var cancelbtn = $("#cancel"+obwod_id);
+    var karty_field = $("#karty"+obwod_id);
+    var wyborcy_field = $("#wyborcy"+obwod_id);
+    var post_karty_field = $("#post_karty"+obwod_id);
+    var post_wyborcy_field = $("#post_wyborcy"+obwod_id);
+    console.log(post_karty_field.val());
+    console.log(post_wyborcy_field.val());
+    $.ajax({
+        url : "/gminy/obwod/" + obwod_id + "/", 
+        type : "POST",
+        data : { karty : post_karty_field.val(), wyborcy : post_wyborcy_field.val() },
+        success: function(data) {
+            console.log(data);
+            editbtn.show();
+            savebtn.hide();
+            cancelbtn.hide();
+            karty_field.show();
+            karty_field.html(post_karty_field.val());
+            post_karty_field.hide();
+            wyborcy_field.show();
+            wyborcy_field.html(post_wyborcy_field.val());
+            post_wyborcy_field.hide();
+        },
+        error : function(xhr,errmsg,err) {
+            console.log(xhr.status + ": " + xhr.responseText);
+        }
+
+    });
+});
+
+$('.cancel').click(function() {
+    var obwod_id = $(this).attr("data-id");
+    var editbtn = $("#edit"+obwod_id);
+    var savebtn = $("#save"+obwod_id);
+    var cancelbtn = $("#cancel"+obwod_id);
+    var karty_field = $("#karty"+obwod_id);
+    var wyborcy_field = $("#wyborcy"+obwod_id);
+    var post_karty_field = $("#post_karty"+obwod_id);
+    var post_wyborcy_field = $("#post_wyborcy"+obwod_id);
+
+    editbtn.show();
+    savebtn.hide();
+    cancelbtn.hide();
+    karty_field.show();
+    post_karty_field.hide();
+    wyborcy_field.show();
+    post_wyborcy_field.hide();
 });

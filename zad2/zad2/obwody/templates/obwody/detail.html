@@ -9,13 +9,23 @@
     </tr>
     {% for obwod in obwody %}
     <tr>
-        <td>{{ obwod.nazwa }}</td>
-        <td>{{ obwod.karty }}</td>
-        <td>{{ obwod.wyborcy }}</td>
-        <td><button class="edit" id="edit{{ obwod.id }}" data-id="{{ obwod.id }}" class="btn btn-mini btn-primary" type="button">Edytuj</button>
-            <button class="save" id="save{{ obwod.id }}" data-id="{{ obwod.id }}" class="btn btn-mini btn-primary" type="button" style="display: none;">Zapisz</button>
-            <button class="cancel" id="cancel{{ obwod.id }}" data-id="{{ obwod.id }}" class="btn btn-mini btn-primary" type="button" style="display: none;">Anuluj</button>
-        </td>
+        <form action="/gminy/obwod/{{ obwod.id }}/" method="POST" id="form{{ obwod.id }}">
+            {% csrf_token %}
+            <td>{{ obwod.nazwa }}</td>
+            <td>
+                <span id="karty{{ obwod.id }}">{{ obwod.karty }}</span>
+                <input type="number" min="0" id="post_karty{{ obwod.id }}" style="display: none;">
+            </td>
+            <td>
+                <span id="wyborcy{{ obwod.id }}">{{ obwod.wyborcy }}</span>
+                <input type="number" min="0" id="post_wyborcy{{ obwod.id }}" style="display: none;">
+            </td>
+            <td>
+                <button class="edit" id="edit{{ obwod.id }}" data-id="{{ obwod.id }}" class="btn btn-mini btn-primary" type="button">Edytuj</button>
+                <button class="save" id="save{{ obwod.id }}" data-id="{{ obwod.id }}" class="btn btn-mini btn-primary" type="button" style="display: none;">Zapisz</button>
+                <button class="cancel" id="cancel{{ obwod.id }}" data-id="{{ obwod.id }}" class="btn btn-mini btn-primary" type="button" style="display: none;">Anuluj</button>
+            </td>
+        </form>
     </tr>
     {% endfor %}
 </table>

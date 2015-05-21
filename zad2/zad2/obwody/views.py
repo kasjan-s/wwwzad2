@@ -26,16 +26,20 @@ def detail(request, gmina_id):
     return render(request, 'obwody/detail.html', {'gmina': gmina, 'obwody': obwody})
 
 def obwod(request, obwod_id):
-    try:
-        obwod = Obwod.objects.get(pk=obwod_id)
-        print "ZNALAZLEM"
-        print "ZNALAZLEM"
-        print "ZNALAZLEM"
+    obwod = Obwod.objects.get(pk=obwod_id)
+    if request.method == 'POST':
+        karty = request.POST.get('karty')
+        wyborcy = request.POST.get('wyborcy')
+        obwod.karty = karty
+        obwod.wyborcy = wyborcy
+        obwod.save()
+
+        response_data = {}
+        response_data['result'] = 'Success!'
+
+        return HttpResponse(json.dumps(response_data), content_type="application/json")
+    else:
         return HttpResponse(json.dumps({'karty': obwod.karty, 'wyborcy': obwod.wyborcy}), content_type="application/json")
-    except:
-        print "NIE ZNALAZLEM"
-        print "NIE ZNALAZLEM"
-        return HttpResponse(json.dumps(None), content_type="application/json")
 
 def results(request, gmina_id):
     response = "Obczajasz gmine %s."
