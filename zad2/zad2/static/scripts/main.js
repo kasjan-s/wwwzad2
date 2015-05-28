@@ -49,6 +49,8 @@ $.ajaxSetup({
     }
 });
 
+var unix_time = Date.now() / 1000;
+
 $('.edit').click(function() {
     var obwod_id = $(this).attr("data-id");
     var editbtn = $(this);
@@ -58,6 +60,9 @@ $('.edit').click(function() {
     var wyborcy_field = $("#wyborcy"+obwod_id);
     var post_karty_field = $("#post_karty"+obwod_id);
     var post_wyborcy_field = $("#post_wyborcy"+obwod_id);
+
+    unix_time = Date.now() / 1000;
+    console.log(unix_time);
 
     $.ajax({
         url : "/gminy/obwod/" + obwod_id, 
@@ -94,18 +99,21 @@ $('.save').click(function() {
     $.ajax({
         url : "/gminy/obwod/" + obwod_id + "/", 
         type : "POST",
-        data : { karty : post_karty_field.val(), wyborcy : post_wyborcy_field.val() },
+        data : { karty : post_karty_field.val(), wyborcy : post_wyborcy_field.val(), czas : unix_time },
         success: function(data) {
             console.log(data);
             editbtn.show();
             savebtn.hide();
             cancelbtn.hide();
             karty_field.show();
-            karty_field.html(post_karty_field.val());
             post_karty_field.hide();
             wyborcy_field.show();
-            wyborcy_field.html(post_wyborcy_field.val());
             post_wyborcy_field.hide();
+            karty_field.html(data['karty']);
+            wyborcy_field.html(data['wyborcy']);
+            if (data['result'] == 0) {
+                alert(data['result_msg']);
+            }
         },
         error : function(xhr,errmsg,err) {
             console.log(xhr.status + ": " + xhr.responseText);

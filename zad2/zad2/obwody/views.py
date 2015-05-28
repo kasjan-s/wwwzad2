@@ -30,12 +30,27 @@ def obwod(request, obwod_id):
     if request.method == 'POST':
         karty = request.POST.get('karty')
         wyborcy = request.POST.get('wyborcy')
-        obwod.karty = karty
-        obwod.wyborcy = wyborcy
-        obwod.save()
+        czas = datetime.datetime.fromtimestamp(float(request.POST.get('czas')))
+        czas_aware = pytz.utc.localize(czas)
 
-        response_data = {}
-        response_data['result'] = 'Success!'
+        if czas_aware > obwod.aktualizacja:
+            obwod.karty = karty
+            obwod.wyborcy = wyborcy
+            obwod.aktualizacja = czas_aware
+            obwod.save()
+
+            response_data = {}
+            response_data['result'] = 1
+            response_data['result_msg'] = 'Sukces!'
+            response_data['karty'] = obwod.karty
+            response_data['wyborcy'] = obwod.wyborcy
+        else:
+            response_data = {}
+            response_data['result'] = 0
+            response_data['result_msg'] = 'Ktos zmodyfikowal pola w miedzyczasie!'
+            response_data['karty'] = obwod.karty
+            response_data['wyborcy'] = obwod.wyborcy
+
 
         return HttpResponse(json.dumps(response_data), content_type="application/json")
     else:
